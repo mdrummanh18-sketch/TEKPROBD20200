@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEK PRO AI - Professional Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --dark-bg: #0a0a12;
+            --card-bg: rgba(20, 20, 35, 0.9);
+            --win: #00c853;
+            --loss: #ff5252;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--dark-bg); color: white; overflow-x: hidden; }
+        #particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; }
+
+        /* Login Section */
+        #passwordOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #05050a; display: flex; align-items: center; justify-content: center; z-index: 9999;
+        }
+        .login-card {
+            background: var(--card-bg); padding: 40px 30px; border-radius: 20px;
+            text-align: center; border: 1px solid var(--primary); width: 90%; max-width: 380px;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
+
+        .btn-admin-contact {
+            display: block; width: 100%; padding: 15px; border-radius: 15px;
+            background: linear-gradient(90deg, #229ED9, #2481cc); 
+            color: white; text-decoration: none; font-weight: bold;
+            margin-bottom: 25px; text-align: center;
+            box-shadow: 0 4px 15px rgba(34, 158, 217, 0.4);
+            animation: bounce 2s infinite; 
+        }
+
+        .login-card input {
+            padding: 12px; width: 100%; border-radius: 10px; border: 1px solid #333;
+            background: #111; color: white; margin-bottom: 20px; text-align: center; font-size: 18px;
+        }
+        .login-submit {
+            padding: 12px 40px; border-radius: 10px; border: none; width: 100%;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5); color: white; font-weight: bold; cursor: pointer;
+        }
+
+        /* Main UI */
+        .container { max-width: 480px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .logo {
+            font-family: 'Orbitron', sans-serif; font-size: 35px; font-weight: 800;
+            background: linear-gradient(90deg, #00d2ff, #00f2fe);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .live-clock {
+            font-size: 18px; color: #00f2fe; margin-bottom: 10px; font-family: 'Orbitron';
+            background: rgba(0, 210, 255, 0.1); display: inline-block; padding: 5px 15px; border-radius: 50px;
+        }
+        .card {
+            background: var(--card-bg); border-radius: 25px; padding: 25px;
+            margin-bottom: 20px; border: 1px solid rgba(0, 210, 255, 0.2);
+            backdrop-filter: blur(15px); text-align: center;
+        }
+        .period-num { font-size: 30px; color: var(--primary); font-weight: bold; font-family: 'Orbitron'; }
+        .prediction-box {
+            background: rgba(0,0,0,0.4); border-radius: 20px; padding: 30px;
+            margin: 20px 0; border: 2px dashed var(--primary);
+        }
+        .pred-value { font-size: 50px; font-weight: 800; margin: 10px 0; color: #fff; }
+        .btn-tg {
+            display: block; width: 100%; padding: 15px; border-radius: 15px;
+            background: linear-gradient(90deg, #229ED9, #2481cc); color: white; 
+            text-decoration: none; font-weight: bold;
+        }
+
+        /* History Headings Fix */
+        .history-header {
+            display: grid; grid-template-columns: 1fr 1.5fr 1fr 1.3fr; 
+            padding: 10px; font-weight: bold; color: var(--primary);
+            border-bottom: 1px solid var(--primary); font-size: 13px;
+        }
+        .history-item {
+            display: grid; grid-template-columns: 1fr 1.5fr 1fr 1.3fr; 
+            padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="passwordOverlay">
+        <div class="login-card">
+            <h2 style="color: #00d2ff; margin-bottom: 20px;">DKWIN AI LOGIN</h2>
+            <a href="https://t.me/MAH_VAI" target="_blank" class="btn-admin-contact">
+                <i class="fab fa-telegram"></i> CLICK ADMIN
+            </a>
+            <input type="password" id="passInput" placeholder="Enter Password">
+            <button class="login-submit" onclick="verify()">LOGIN</button>
+            <p id="errMsg" style="color: #ff5252; margin-top: 15px; font-size: 14px;"></p>
+        </div>
+    </div>
+
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">DKWIN AI</div>
+            <div class="live-clock" id="liveClock">00:00:00</div>
+        </div>
+
+        <div class="card">
+            <div style="color: #aaa;">Next Period</div>
+            <div class="period-num" id="periodDisplay">-------</div>
+            <div class="prediction-box">
+                <div style="font-size: 12px; color: #00f2fe; letter-spacing: 2px;">AI PREDICTION</div>
+                <div class="pred-value" id="predictionValue">WAIT...</div>
+            </div>
+            <a href="https://t.me/TEKPROBD" target="_blank" class="btn-tg">
+                <i class="fab fa-telegram"></i> JOIN TELEGRAM
+            </a>
+        </div>
+
+        <div class="card" style="text-align: left;">
+            <h4 style="margin-bottom: 15px; color: var(--primary);"><i class="fas fa-history"></i> Live History</h4>
+            
+            <div class="history-header">
+                <span>Time</span>
+                <span>Period</span>
+                <span>Result</span>
+                <span>AI</span>
+            </div>
+
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        const ADMIN_PASSWORD = "TEKPRO2026"; 
+        let currentLoadedPeriod = "";
+        let lastAiPrediction = "";
+        let lastLuckyNum = "";
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('liveClock').innerText = now.toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+
+        function verify() {
+            if(document.getElementById("passInput").value === ADMIN_PASSWORD) {
+                document.getElementById("passwordOverlay").style.display = "none";
+            } else {
+                document.getElementById("errMsg").innerText = "ভুল পাসওয়ার্ড!";
+            }
+        }
+
+        async function updateData() {
+            try {
+                const res = await fetch(`https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?ts=${Date.now()}`);
+                const data = await res.json();
+                const latestRecord = data.data.list[0];
+                const nextPeriod = (BigInt(latestRecord.issueNumber) + 1n).toString().slice(-5);
+
+                if (currentLoadedPeriod !== nextPeriod) {
+                    if (currentLoadedPeriod !== "") {
+                        const now = new Date();
+                        const timeStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+                        addToHistory(timeStr, latestRecord.issueNumber.slice(-5), latestRecord.number, lastAiPrediction, lastLuckyNum);
+                    }
+                    currentLoadedPeriod = nextPeriod;
+                    document.getElementById('periodDisplay').innerText = nextPeriod;
+                    
+                    const options = ["BIG", "SMALL"];
+                    lastAiPrediction = options[Math.floor(Math.random() * options.length)];
+                    
+                    if (lastAiPrediction === "BIG") {
+                        lastLuckyNum = Math.floor(Math.random() * 5) + 5; 
+                    } else {
+                        lastLuckyNum = Math.floor(Math.random() * 5); 
+                    }
+                    
+                    document.getElementById('predictionValue').innerText = lastAiPrediction + " " + lastLuckyNum;
+                    document.getElementById('predictionValue').style.color = (lastAiPrediction === "BIG") ? "#ff4081" : "#00f2fe";
+                }
+            } catch (err) { }
+        }
+
+        function addToHistory(time, period, number, prediction, pNum) {
+            const actualResult = (parseInt(number) >= 5) ? "BIG" : "SMALL";
+            const isWin = (actualResult === prediction);
+            const historyList = document.getElementById('historyList');
+            const item = document.createElement('div');
+            item.className = 'history-item';
+            item.innerHTML = `
+                <span>${time}</span>
+                <span>${period}</span>
+                <span>${number}(${actualResult})</span>
+                <span style="color:${isWin?'#00c853':'#ff5252'}">${prediction} ${pNum}${isWin?'✓':'✗'}</span>
+            `;
+            historyList.insertBefore(item, historyList.firstChild);
+            if (historyList.children.length > 8) historyList.removeChild(historyList.lastChild);
+        }
+
+        particlesJS('particles-js', {
+            particles: { number: { value: 40 }, color: { value: "#00d2ff" }, opacity: { value: 0.2 }, move: { enable: true, speed: 1 } }
+        });
+
+        setInterval(updateData, 3000);
+        updateData();
+    </script>
+</body>
+</html>
